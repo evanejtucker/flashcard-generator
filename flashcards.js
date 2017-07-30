@@ -1,104 +1,96 @@
 
 // Global Variables
 //---------------------------------------------------------------------------
-var Flashcard = require("./cardCreator");
 var inquirer = require("inquirer");
+var cardCreator = require("./cardCreator");
+var flashcard = cardCreator.Flashcard;
+var questions = cardCreator.questions;
 
 var cardType = process.argv[2];
 
-
-// Flashcards
-//---------------------------------------------------------------------------
-var question1 = new Flashcard(
-  "who was the first president of the United States?",
-  "George Washington",
-  "... was the first president of the united states."
-  );
-
-var question2 = new Flashcard(
-  "What metal has the highest melting point?",
-  "tungsten",
-  "... is the metal with the highest melting point."
-  );
-
-var question3 = new Flashcard(
-  "Who invented bifocals?",
-  "benjamin franklin",
-  "... invented the bifocals"
-  );
-
-var question4 = new Flashcard(
-  "Waht is the largest mammal?",
-  "blue whale",
-  "The ... is the largest mammal on Earth"
-  );
-
-var question5 = new Flashcard(
-  "What Planet is farthest from the Sun?",
-  "neptune",
-  "... is the farthest planet from the Sun."
-  );
-
-var question6 = new Flashcard(
-  "What is the largest ocean on Earth?",
-  "pacific",
-  "The ... is the largest ocean on Earth"
-  );
-
-var questions = [question1, question2, question3, question4, question5, question6];
-
 var correct = 0;
-var incorrect = questions.length - correct;
+var incorrect = 0;
 
 // Functions
 //---------------------------------------------------------------------------
 
-// will run questions for cloze cards
-function clozeCard() {
-	inquirer.prompt([
-		{
-			type: "input",
-			message: questions[0].cloze,
-			name: "userGuess"
 
-		},
+function basic() {
+   inquirer.prompt(questions.map(function(question) {
+   		return question.basicCard();
+    })).then(function (answers) {
+   	for (var back in answers) {
+   		if (answers[back] === back) {
+   			correct++
+   		} else {
+   			incorrect++
+   		}
+	}
+	console.log("Correct guesses = " + correct);
+	console.log("Incorrect guesses = " + incorrect);
+	console.log("----------------------------------");
+	playBasicAgain();
 
-	]).then(function (answers) {
-		if(answers.userGuess === questions[0].back) {
-			console.log("Correct!");
-			correct++;
-		} else {
-			console.log("Sorry thats not the answer,\nthe correct answer was: " + questions[0].back)
-		}
-
-	});
-
+  });
+  
 }
 
 
-// will run questions for basic cards
-function basicCard() {
-	inquirer.prompt([
-		{
-			type: "input",
-			message: questions[0].front,
-			name: "userGuess"
+function cloze() {
+	inquirer.prompt(questions.map(function(question) {
+   		return question.clozeCard();
+    })).then(function (answers) {
+   	for (var back in answers) {
+   		if (answers[back] === back) {
+   			correct++
+   		} else {
+   			incorrect++
+   		}
+	}
+	console.log("Correct guesses = " + correct);
+	console.log("Incorrect guesses = " + incorrect);
+	console.log("----------------------------------");
+	playClozeAgain();
 
-		},
+  });
 
-	]).then(function (answers) {
-		if(answers.userGuess === questions[0].back) {
-			console.log("Correct!");
-			correct++;
-		} else {
-			console.log("Sorry thats not the answer,\n the correct answer was:" + questions[0].back)
-		}
-
-	});
-
-	// console.log("\nCorrect: " + correct + " || " + "Incorrct: " + incorrect);
 }
 
+// replay basic
+function playBasicAgain() {
+	inquirer.prompt([
+		{
+			type: "confirm",
+			message: "Would you like to play again?",
+			name: "replay"
+		},
+
+	]).then(function (answer) {
+	    if(answer.replay) {
+	    	basic();
+	    } else {
+	    	console.log("this game isnt for the weak of heart anyway.")
+	    }
+	});
+}
+
+// replay cloze 
+function playClozeAgain() {
+	inquirer.prompt([
+		{
+			type: "confirm",
+			message: "Would you like to play again?",
+			name: "replay"
+		},
+
+	]).then(function (answer) {
+	    if(answer.replay) {
+	    	cloze();
+	    } else {
+	    	console.log("this game isnt for the weak of heart anyway.")
+	    }
+	});
+}
 
 // Main Process
 //---------------------------------------------------------------------------
@@ -106,11 +98,11 @@ function basicCard() {
 switch(cardType) {
 	case "basic":
 		console.log("basic card selected!");
-		basicCard();
+		basic();
 		break;
 	case "cloze":
 		console.log("cloze card selected!");
-		clozeCard();
+		cloze();
 		break;
 	default:
 		// if cardType not recognized
