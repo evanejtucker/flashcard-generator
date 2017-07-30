@@ -55,21 +55,20 @@ var incorrect = questions.length - correct;
 
 // will run questions for cloze cards
 function clozeCard() {
-	console.log("cloze card selected!");
 	inquirer.prompt([
 		{
 			type: "input",
-			message: questions[5].cloze,
+			message: questions[0].cloze,
 			name: "userGuess"
 
 		},
 
 	]).then(function (answers) {
-		if(answers.userGuess === questions[5].back) {
+		if(answers.userGuess === questions[0].back) {
 			console.log("Correct!");
 			correct++;
 		} else {
-			console.log("Sorry thats not the answer,\nthe correct answer was: " + questions[5].back)
+			console.log("Sorry thats not the answer,\nthe correct answer was: " + questions[0].back)
 		}
 
 	});
@@ -79,7 +78,6 @@ function clozeCard() {
 
 // will run questions for basic cards
 function basicCard() {
-	console.log("basic card selected!");
 	inquirer.prompt([
 		{
 			type: "input",
@@ -97,6 +95,8 @@ function basicCard() {
 		}
 
 	});
+
+	// console.log("\nCorrect: " + correct + " || " + "Incorrct: " + incorrect);
 }
 
 
@@ -105,9 +105,11 @@ function basicCard() {
 
 switch(cardType) {
 	case "basic":
+		console.log("basic card selected!");
 		basicCard();
 		break;
 	case "cloze":
+		console.log("cloze card selected!");
 		clozeCard();
 		break;
 	default:
